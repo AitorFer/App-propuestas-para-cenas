@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <style>
+
+    #propuesta{
+      text-align: center;
+      margin-left: 530px;
+    }
+    #proponer{
+      border-radius: 40px;
+      margin-left: 650px;
+    }
+      hr{
+        background-color:black;
+        color:black;
+
+      }
+      #titulo{
+      text-align: center;
+      }
+      h3{
+        text-align: center;
+      }
+    </style>
+<h2 id='titulo'> Dia de cena </h2>
+    <div class="input-group input-group-sm mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Lugar</span>
+      </div>
+      <input type="text" class="form-control" id='lugar' aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+    </div>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Fecha</span>
+      </div>
+      <input type="date" id='fecha' class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+    </div>
+    <button id='proponer'>Enviar</button>
+<hr>
+<hr>
+
+<div id='propuesta'>
+
+</div>
+
+
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+    <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+<script type='text/javascript'>
+
+$('button#proponer').click(function(){
+        var input=$('input#lugar').val();
+        var input2=$('input#fecha').val();
+
+        var append='<div class="card" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><p class="card-text"</p><a href="#" class="cardLugar">Lo veo</a><br></div>'
+
+    $('div#propuesta').append('<div>' + append + '</div>',"<h3>Votos:<span id='contador'>0</span></h3>");
+
+
+});
+var contador=0
+$(document).on('click',"a.cardLugar",function(){
+            contador ++;
+  $('span#contador').text(contador);
+});
+
+
+
+</script>
+
+  </body>
+
+</html>
