@@ -53,7 +53,7 @@ $('button#proponer').click(function(){
         var input=$('input#lugar').val();
         var input2=$('input#fecha').val();
 
-        var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
+        var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
 if(input && input2){
     $('div#propuesta').append(append);
 }else{
@@ -63,14 +63,26 @@ if(input && input2){
 });
 
 var contador=0;
-
+//sumar votos en card
   $(document).on('click',"a.cardLugar",function(event){
-      var span=$(event.currentTarget).next("h3").children("span"); console.log(span)
+      var span=$(event.currentTarget).next().next("h3").children("span");
+      console.log(span)
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
       span.text(nuevosVotos);
 
 });
+//quitar voto en caso de arrepentirse
+
+  $(document).on('click',"a.cancelarVoto",function(event){
+            var span=$(event.currentTarget).next("h3").children("span");
+            var votosActuales=parseInt(span.text());
+        if(votosActuales>0){
+            var nuevosVotos=votosActuales - 1;
+
+          }
+          span.text(nuevosVotos);
+    });
 </script>
 
   </body>
