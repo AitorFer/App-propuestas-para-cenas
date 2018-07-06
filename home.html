@@ -6,11 +6,6 @@
   </head>
   <body>
     <style>
-
-    #propuesta{
-      text-align: center;
-      margin-left: 530px;
-    }
     #proponer{
       border-radius: 40px;
       margin-left: 650px;
@@ -18,13 +13,9 @@
       hr{
         background-color:black;
         color:black;
-
       }
       #titulo{
       text-align: center;
-      }
-      h3{
-        text-align: center;
       }
     </style>
 <h2 id='titulo'> Dia de cena </h2>
@@ -45,7 +36,7 @@
 <hr>
 <hr>
 
-<div id='propuesta'>
+<div id='propuesta' class="row">
 
 </div>
 
@@ -62,20 +53,24 @@ $('button#proponer').click(function(){
         var input=$('input#lugar').val();
         var input2=$('input#fecha').val();
 
-        var append='<div class="card" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><p class="card-text"</p><a href="#" class="cardLugar">Lo veo</a><br></div>'
-
-    $('div#propuesta').append('<div>' + append + '</div>',"<h3>Votos:<span id='contador'>0</span></h3>");
-
+        var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
+if(input && input2){
+    $('div#propuesta').append(append);
+}else{
+  alert("Necesarios campos fecha y lugar");
+}
 
 });
-var contador=0
-$(document).on('click',"a.cardLugar",function(){
-            contador ++;
-  $('span#contador').text(contador);
+
+var contador=0;
+
+  $(document).on('click',"a.cardLugar",function(event){
+      var span=$(event.currentTarget).next("h3").children("span"); console.log(span)
+      var votosActuales=parseInt(span.text());
+      var nuevosVotos=votosActuales + 1;
+      span.text(nuevosVotos);
+
 });
-
-
-
 </script>
 
   </body>
