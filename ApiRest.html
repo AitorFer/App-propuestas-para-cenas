@@ -5,8 +5,21 @@
     <title></title>
   </head>
   <body>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
     <script type="text/javascript">
-    
+//probando peticion a API
+      var url="http://192.168.100.11:1337/fechas"
+
+  $.get(url,function(respuesta){
+
+              console.log(respuesta);
+    respuesta.forEach(function(datos){
+              console.log(respuesta.fecha);
+        $('div#propuesta').append('<h3>'+ datos.fecha + '</h3>')
+
+    });
+});
 
     </script>
 

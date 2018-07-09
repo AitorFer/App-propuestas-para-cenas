@@ -45,7 +45,6 @@
 
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-    <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 <script type='text/javascript'>
@@ -71,7 +70,7 @@ var contador=0;
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
     if($("a.cardLugar").hasClass("click")){
-        
+
     }
       span.text(nuevosVotos);
 
@@ -86,6 +85,22 @@ var contador=0;
 }
           span.text(nuevosVotos);
     });
+</script>
+<script type="text/javascript">
+ //pintando los datos en nuestro html
+  var url="http://192.168.100.11:1337/fechas"
+
+$.get(url,function(respuesta){
+
+          console.log(respuesta);
+respuesta.forEach(function(datos){
+  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
+          console.log(datos.fecha);
+    $('div#propuesta').append(caja);
+
+ });
+});
+
 </script>
 
   </body>
