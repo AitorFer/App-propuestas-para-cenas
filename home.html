@@ -55,10 +55,16 @@ $('button#proponer').click(function(){
 
         var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
 if(input && input2){
-    $('div#propuesta').append(append);
+  //post a la API para guardar los datos de fecha y lugar propuestos
+    var urlPOST="http://192.168.100.11:1337/fecha"
+          $.post(urlPOST,{fecha:input2, lugar:input},function(){
+              $('div#propuesta').append(append);
+      });
+
 }else{
   alert("Necesarios campos fecha y lugar");
 }
+
 
 });
 
@@ -69,10 +75,7 @@ var contador=0;
       console.log(span)
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
-    if($("a.cardLugar").hasClass("click")){
-
-    }
-      span.text(nuevosVotos);
+        span.text(nuevosVotos);
 
 });
 //quitar voto en caso de arrepentirse
@@ -100,6 +103,7 @@ respuesta.forEach(function(datos){
 
  });
 });
+
 
 </script>
 
