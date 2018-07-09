@@ -10,6 +10,7 @@
       border-radius: 40px;
       margin-left: 650px;
     }
+
       hr{
         background-color:black;
         color:black;
@@ -69,6 +70,9 @@ var contador=0;
       console.log(span)
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
+    if($("a.cardLugar").hasClass("click")){
+        
+    }
       span.text(nuevosVotos);
 
 });
@@ -79,8 +83,7 @@ var contador=0;
             var votosActuales=parseInt(span.text());
         if(votosActuales>0){
             var nuevosVotos=votosActuales - 1;
-
-          }
+}
           span.text(nuevosVotos);
     });
 </script>
