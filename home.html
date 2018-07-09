@@ -71,23 +71,42 @@ if(input && input2){
 var contador=0;
 //sumar votos en card
   $(document).on('click',"a.cardLugar",function(event){
+    if($(event.currentTarget).hasClass('clicked')) {
+            alert('ya has votado una vez')
+
+      return;
+
+    }
+        $(event.currentTarget).addClass('clicked');
       var span=$(event.currentTarget).next().next("h3").children("span");
-      console.log(span)
+                  //console.log(span)
+      var id=$(event.currentTarget).data('id');
+      //post con la id de cada propuesta y nos devuelve los datos.votos
+  $.post("http://192.168.100.11:1337/fecha/sumar/" + id,{},function(){
+
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
-        span.text(nuevosVotos);
+          span.text(nuevosVotos);
+    });
 
 });
 //quitar voto en caso de arrepentirse
 
   $(document).on('click',"a.cancelarVoto",function(event){
+    if(!$(event.currentTarget).prev('a').hasClass('clicked')){
+            
+      return;
+    }
+    $(event.currentTarget).prev('a').removeClass('clicked');
             var span=$(event.currentTarget).next("h3").children("span");
             var votosActuales=parseInt(span.text());
-        if(votosActuales>0){
+
+      if(votosActuales>0){
             var nuevosVotos=votosActuales - 1;
 }
+
           span.text(nuevosVotos);
-    });
+  });
 </script>
 <script type="text/javascript">
  //pintando los datos en nuestro html
@@ -97,8 +116,8 @@ $.get(url,function(respuesta){
 
           console.log(respuesta);
 respuesta.forEach(function(datos){
-  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
-          console.log(datos.fecha);
+  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3></div>'
+            console.log(datos.fecha);
     $('div#propuesta').append(caja);
 
  });
