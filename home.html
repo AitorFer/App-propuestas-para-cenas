@@ -6,6 +6,11 @@
   </head>
   <body>
     <style>
+    #login{
+      text-align: center;
+
+
+    }
     #proponer{
       border-radius: 40px;
       margin-left: 650px;
@@ -19,7 +24,16 @@
       text-align: center;
       }
     </style>
-<h2 id='titulo'> Dia de cena </h2>
+<div id='login'>
+        <h4 id='tituloLogin'> Login </h4>
+    <input type="email" placeholder="E-mail" id='username'>
+    <input type="password" placeholder="Password" id='password'>
+    <button type='submit'id='iniciarSesion'>Iniciar sesion</button>
+    </div>
+  <br>
+  <br>
+  <h2 id='titulo'> Dia de cena </h2>
+<div id='app' style='display:none'>
     <div class="input-group input-group-sm mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-sm">Lugar</span>
@@ -36,18 +50,35 @@
     <button id='proponer'>Enviar</button>
 <hr>
 <hr>
-
+</div>
 <div id='propuesta' class="row">
 
 </div>
-
-
-
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 <script type='text/javascript'>
+    //funcion para iniciar sesion
+  function iniciarSesion(){
+        $('button#iniciarSesion').click(function(){
+              var username=$('input#username').val();
+              var password=$('input#password').val();
+    //si la sesion es correcta iniciamos la app
+            var peticion = { url:"http://192.168.100.63:1337/login",
+                     type:'POST',
+                     data:{username:username, password:password}
+                  };
+            $.ajax(peticion).done(iniciarAplicacion).fail(function(){
+                                                      alert('Login incorrecto')
+                                                    });
+              });
+
+  }
+    //funcion para poder usar app
+function iniciarAplicacion(){
+      $('div#login').hide();
+      $('div#app').show();
 
   $('button#proponer').click(function(){
         var input=$('input#lugar').val();
@@ -122,8 +153,6 @@
                 console.log(id)
 
   });
-</script>
-  <script type="text/javascript">
 //pintando los datos en nuestro html
   var url="http://192.168.100.63:1337/fechas"
 
@@ -149,8 +178,10 @@ $(document).on('click',"button.eliminar",function(event){
                 })
 
           });
-
+}
+    iniciarSesion();
 </script>
+
 
   </body>
 
