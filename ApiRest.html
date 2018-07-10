@@ -10,8 +10,8 @@
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
     <script type="text/javascript">
-//probando peticion a API
-      var url="http://192.168.100.11:1337/fechas"
+//probando peticon a API
+      var url="http://192.168.100.63:1337/fechas"
 
   $.get(url,function(respuesta){
 
@@ -22,7 +22,7 @@
 
     });
     //probando POST a API
-    var urlPOST="http://192.168.100.11:1337/fecha"
+    var urlPOST="http://192.168.100.63:1337/fecha"
           $.post(urlPOST,{fecha:input2, lugar:input},function(){
 
               $('div#propuesta').append(append);

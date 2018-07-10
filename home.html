@@ -55,8 +55,8 @@ $('button#proponer').click(function(){
 
         var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
 if(input && input2){
-  //post a la API para guardar los datos de fecha y lugar propuestos
-    var urlPOST="http://192.168.100.11:1337/fecha"
+      //post a la API para guardar los datos de fecha y lugar propuestos
+        var urlPOST="http://192.168.100.63:1337/fecha"
           $.post(urlPOST,{fecha:input2, lugar:input},function(){
               $('div#propuesta').append(append);
       });
@@ -65,14 +65,13 @@ if(input && input2){
   alert("Necesarios campos fecha y lugar");
 }
 
-
 });
 
-var contador=0;
-//sumar votos en card
+
+    //sumar votos en card
   $(document).on('click',"a.cardLugar",function(event){
     if($(event.currentTarget).hasClass('clicked')) {
-            alert('ya has votado una vez')
+            alert('ya has votado una vez');
 
       return;
 
@@ -81,48 +80,54 @@ var contador=0;
       var span=$(event.currentTarget).next().next("h3").children("span");
                   //console.log(span)
       var id=$(event.currentTarget).data('id');
-      //post con la id de cada propuesta y nos devuelve los datos.votos
-  $.post("http://192.168.100.11:1337/fecha/sumar/" + id,{},function(){
+      //peticion ajax
+  $.ajax({ url:'http://192.168.100.63:1337/',
+           type:'PUT',
+           data:{} ,
+        }).done(function(datos){
+              console.log(datos)
+        });
 
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
           span.text(nuevosVotos);
+            console.log(id)
     });
-
-});
-//quitar voto en caso de arrepentirse
+      //quitar voto en caso de arrepentirse
 
   $(document).on('click',"a.cancelarVoto",function(event){
     if(!$(event.currentTarget).prev('a').hasClass('clicked')){
-            
+
       return;
     }
     $(event.currentTarget).prev('a').removeClass('clicked');
-            var span=$(event.currentTarget).next("h3").children("span");
-            var votosActuales=parseInt(span.text());
 
-      if(votosActuales>0){
-            var nuevosVotos=votosActuales - 1;
-}
+              var id=$(event.currentTarget).data('id');
+              var span=$(event.currentTarget).next("h3").children("span");
+      $.post("http://192.168.100.63:1337/fecha/restar/" + id,{},function(){
 
-          span.text(nuevosVotos);
+              var votosActuales=parseInt(span.text());
+          if(votosActuales>0){
+              var nuevosVotos=votosActuales - 1;
+            }
+
+            span.text(nuevosVotos);
+            console.log(id)
+    });
   });
 </script>
-<script type="text/javascript">
- //pintando los datos en nuestro html
-  var url="http://192.168.100.11:1337/fechas"
+  <script type="text/javascript">
+        //pintando los datos en nuestro html
+  var url="http://192.168.100.63:1337/fechas"
 
 $.get(url,function(respuesta){
-
-          console.log(respuesta);
+        //console.log(respuesta);
 respuesta.forEach(function(datos){
-  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3></div>'
-            console.log(datos.fecha);
+  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3></div>'
+        //console.log(datos.fecha);
     $('div#propuesta').append(caja);
-
- });
+  });
 });
-
 
 </script>
 
