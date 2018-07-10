@@ -49,26 +49,27 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 <script type='text/javascript'>
 
-$('button#proponer').click(function(){
+  $('button#proponer').click(function(){
         var input=$('input#lugar').val();
         var input2=$('input#fecha').val();
 
-        var append='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3>"</div>'
-if(input && input2){
-      //post a la API para guardar los datos de fecha y lugar propuestos
+
+  if(input && input2){
+  //post a la API para guardar los datos de fecha y lugar propuestos
         var urlPOST="http://192.168.100.63:1337/fecha"
-          $.post(urlPOST,{fecha:input2, lugar:input},function(){
+
+          $.post(urlPOST,{fecha:input2, lugar:input},function(fecha){
+            var append='<div class="card col-md-3" data-id="'+fecha.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3><button class="eliminar">Eliminar</button></div>'
               $('div#propuesta').append(append);
-      });
+                        //console.log(fecha)
 
-}else{
-  alert("Necesarios campos fecha y lugar");
-}
-
+          });
+      }else{
+        alert("Necesarios campos fecha y lugar");
+      }
 });
 
-
-    //sumar votos en card
+  //sumar votos en card
   $(document).on('click',"a.cardLugar",function(event){
     if($(event.currentTarget).hasClass('clicked')) {
             alert('ya has votado una vez');
@@ -79,9 +80,9 @@ if(input && input2){
         $(event.currentTarget).addClass('clicked');
       var span=$(event.currentTarget).next().next("h3").children("span");
                   //console.log(span)
-      var id=$(event.currentTarget).data('id');
-      //peticion ajax
-  $.ajax({ url:'http://192.168.100.63:1337/',
+      var id=$(event.currentTarget).parent().data('id');
+  //peticion ajax sumar voto
+  $.ajax({ url:'http://192.168.100.63:1337/fecha/sumar/'+ id,
            type:'PUT',
            data:{} ,
         }).done(function(datos){
@@ -93,18 +94,24 @@ if(input && input2){
           span.text(nuevosVotos);
             console.log(id)
     });
-      //quitar voto en caso de arrepentirse
+  //quitar voto en caso de arrepentirse
 
   $(document).on('click',"a.cancelarVoto",function(event){
     if(!$(event.currentTarget).prev('a').hasClass('clicked')){
 
       return;
     }
-    $(event.currentTarget).prev('a').removeClass('clicked');
+      $(event.currentTarget).prev('a').removeClass('clicked');
 
-              var id=$(event.currentTarget).data('id');
+              var id=$(event.currentTarget).parent().data('id');
               var span=$(event.currentTarget).next("h3").children("span");
-      $.post("http://192.168.100.63:1337/fecha/restar/" + id,{},function(){
+        //peticion ajax restar voto
+          $.ajax({ url:'http://192.168.100.63:1337/fecha/restar/'+ id,
+                  type:'PUT',
+                  data:{} ,
+            }).done(function(datos){
+                          console.log(datos)
+        });
 
               var votosActuales=parseInt(span.text());
           if(votosActuales>0){
@@ -112,22 +119,36 @@ if(input && input2){
             }
 
             span.text(nuevosVotos);
-            console.log(id)
-    });
+                console.log(id)
+
   });
 </script>
   <script type="text/javascript">
-        //pintando los datos en nuestro html
+//pintando los datos en nuestro html
   var url="http://192.168.100.63:1337/fechas"
 
-$.get(url,function(respuesta){
-        //console.log(respuesta);
+        $.get(url,function(respuesta){
+            //console.log(respuesta);
 respuesta.forEach(function(datos){
-  var caja='<div class="card col-md-3"  style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3></div>'
-        //console.log(datos.fecha);
+  var caja='<div class="card col-md-3" data-id="'+datos.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3><button class="eliminar">Eliminar</button></div>'
+            //console.log(datos.fecha);
     $('div#propuesta').append(caja);
   });
 });
+//boton eliminar y quitamos la propuesta
+$(document).on('click',"button.eliminar",function(event){
+    var id=$(event.currentTarget).parent().data('id');
+    var divEntero=$(event.currentTarget).parent();
+              console.log(divEntero)
+          $.ajax({url:'http://192.168.100.63:1337/fecha/'+ id,
+                   type:'DELETE',
+                   data:{} ,
+                }).done(function(datos){
+                        divEntero.remove();
+                      console.log(datos)
+                })
+
+          });
 
 </script>
 
