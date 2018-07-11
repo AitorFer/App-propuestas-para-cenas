@@ -26,8 +26,8 @@
     </style>
 <div id='login'>
         <h4 id='tituloLogin'> Login </h4>
-    <input type="email" placeholder="E-mail" id='username'>
-    <input type="password" placeholder="Password" id='password'>
+    <input type="email" placeholder="E-mail" id='username' value="aitor">
+    <input type="password" placeholder="Password" id='password' value="aitor">
     <button type='submit'id='iniciarSesion'>Iniciar sesion</button>
     </div>
   <br>
@@ -65,7 +65,7 @@
               var username=$('input#username').val();
               var password=$('input#password').val();
     //si la sesion es correcta iniciamos la app
-            var peticion = { url:"http://192.168.100.63:1337/login",
+            var peticion = { url:"http://192.168.100.50:1337/login",
                      type:'POST',
                      data:{username:username, password:password}
                   };
@@ -76,9 +76,12 @@
 
   }
     //funcion para poder usar app
-function iniciarAplicacion(){
-      $('div#login').hide();
-      $('div#app').show();
+function iniciarAplicacion(usuario){
+        console.log(usuario);
+    var USUARIO_ID = usuario.id;
+
+        $('div#login').hide();
+        $('div#app').show();
 
   $('button#proponer').click(function(){
         var input=$('input#lugar').val();
@@ -87,9 +90,9 @@ function iniciarAplicacion(){
 
   if(input && input2){
   //post a la API para guardar los datos de fecha y lugar propuestos
-        var urlPOST="http://192.168.100.63:1337/fecha"
+        var urlPOST="http://192.168.100.50:1337/fecha";
 
-          $.post(urlPOST,{fecha:input2, lugar:input},function(fecha){
+          $.post(urlPOST,{fecha:input2, lugar:input,creador:USUARIO_ID,usuario:USUARIO_ID},function(fecha){
             var append='<div class="card col-md-3" data-id="'+fecha.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3><button class="eliminar">Eliminar</button></div>'
               $('div#propuesta').append(append);
                         //console.log(fecha)
@@ -113,9 +116,11 @@ function iniciarAplicacion(){
                   //console.log(span)
       var id=$(event.currentTarget).parent().data('id');
   //peticion ajax sumar voto
-  $.ajax({ url:'http://192.168.100.63:1337/fecha/sumar/'+ id,
+  $.ajax({ url:'http://192.168.100.50:1337/fecha/sumar/'+ id,
            type:'PUT',
-           data:{} ,
+           data:{creador:USUARIO_ID,
+                usuario:USUARIO_ID,
+           },
         }).done(function(datos){
               console.log(datos)
         });
@@ -137,9 +142,11 @@ function iniciarAplicacion(){
               var id=$(event.currentTarget).parent().data('id');
               var span=$(event.currentTarget).next("h3").children("span");
         //peticion ajax restar voto
-          $.ajax({ url:'http://192.168.100.63:1337/fecha/restar/'+ id,
+          $.ajax({ url:'http://192.168.100.50:1337/fecha/restar/'+ id,
                   type:'PUT',
-                  data:{} ,
+                  data:{
+                        usuario:USUARIO_ID,
+                  },
             }).done(function(datos){
                           console.log(datos)
         });
@@ -154,24 +161,31 @@ function iniciarAplicacion(){
 
   });
 //pintando los datos en nuestro html
-  var url="http://192.168.100.63:1337/fechas"
+  var url="http://192.168.100.50:1337/fechas"
 
-        $.get(url,function(respuesta){
+    $.get(url,function(respuesta){
             //console.log(respuesta);
-respuesta.forEach(function(datos){
-  var caja='<div class="card col-md-3" data-id="'+datos.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3><button class="eliminar">Eliminar</button></div>'
+        respuesta.forEach(function(datos){
+            var caja='<div class="card col-md-3" data-id="'+datos.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3><button class="eliminar">Eliminar</button></div>'
+            var caja2='<div class="card col-md-3" data-id="'+datos.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+datos.lugar+'</h6><h6 class="card-subtitle mb-2 text-muted">'+datos.fecha+'</h6><a href="#" class="cardLugar" data-id="'+datos.id+'">Lo veo</a><a href="#" class="cancelarVoto" data-id="'+datos.id+'">No lo veo</a><h3>Votos:<span>'+ datos.votos +'</span></h3></div>'
             //console.log(datos.fecha);
-    $('div#propuesta').append(caja);
+            if(usuario.id===datos.creador){
+              $('div#propuesta').append(caja);
+    }else{
+              $('div#propuesta').append(caja2);
+    }
   });
 });
 //boton eliminar y quitamos la propuesta
-$(document).on('click',"button.eliminar",function(event){
-    var id=$(event.currentTarget).parent().data('id');
+
+  $(document).on('click',"button.eliminar",function(event){
+      var id=$(event.currentTarget).parent().data('id');
     var divEntero=$(event.currentTarget).parent();
-              console.log(divEntero)
-          $.ajax({url:'http://192.168.100.63:1337/fecha/'+ id,
+              //console.log(divEntero)
+          $.ajax({url:'http://192.168.100.50:1337/fecha/'+ id,
                    type:'DELETE',
-                   data:{} ,
+                   data:{creador:USUARIO_ID,
+                         usuario:USUARIO_ID,},
                 }).done(function(datos){
                         divEntero.remove();
                       console.log(datos)
