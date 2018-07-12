@@ -12,10 +12,17 @@
       #error{
         font-family:cursive;
         text-align: center;
-
       }
       #rellenar{
         text-align: center;
+      }
+      .incorrecto{
+        border-color:red;
+
+      }
+      #todoOk{
+        text-align: center;
+
       }
       </style>
       <h3 id='registro'>Hazte tu cuenta </h3>
@@ -26,8 +33,7 @@
     <br>
     <button id='registrarse' type="submit">Enviar</button>
   </div>
-  <div id='rellenar'>
-  </div>
+  <h3 id='todoOK'></h3>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
@@ -38,19 +44,34 @@
       var username=$('input#username').val();
       var password=$('input#password').val();
     if(username && password){
-          $.ajax({url:'http://192.168.100.50:1337/usuario',
+          $.ajax({url:'http://192.168.100.62:1337/usuario',
                   type:'POST',
                   data:{username:username,
                         password:password,
                   },
 
           }).done(function(){
+              $('input').removeClass('incorrecto');
+              $('div#rellenar').hide();
+              $('h3#todoOK').text('Bienvenido');
 
+          }).fail(function(error){
+            if(error.responseText === "Nombre de usuario duplicado"){
+                $('h3#todoOK').text('Lo siento este usuario ya esta creado')
+                $('input#username').addClass('incorrecto');
+                console.log(error)}
           });
-        }else{
-          $('div#rellenar').append('<h3 id="error">'+ 'Necesarios contraseña y usuario' + '</h3>'+'<img src="C:/Users/PC/Desktop/incorrecto.jpg" id="imagen">')
+        }else if(!username){
+            $('h3#todoOK').text('Necesario nombre de usuario')
+            $('input#username').addClass('incorrecto');
+            $('input#password').removeClass('incorrecto');
+        } else if(!password){
+            $('h3#todoOK').text('No olvides la contraseña')
+            $('input#password').addClass('incorrecto');
+            $('input#username').removeClass('incorrecto');
         }
-      });
+
+    });
 
 
 

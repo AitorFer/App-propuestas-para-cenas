@@ -65,7 +65,7 @@
               var username=$('input#username').val();
               var password=$('input#password').val();
     //si la sesion es correcta iniciamos la app
-            var peticion = { url:"http://192.168.100.50:1337/login",
+            var peticion = { url:"http://192.168.100.62:1337/login",
                      type:'POST',
                      data:{username:username, password:password}
                   };
@@ -90,7 +90,7 @@ function iniciarAplicacion(usuario){
 
   if(input && input2){
   //post a la API para guardar los datos de fecha y lugar propuestos
-        var urlPOST="http://192.168.100.50:1337/fecha";
+        var urlPOST="http://192.168.100.62:1337/fecha";
 
           $.post(urlPOST,{fecha:input2, lugar:input,creador:USUARIO_ID,usuario:USUARIO_ID},function(fecha){
             var append='<div class="card col-md-3" data-id="'+fecha.id+'" style="width: 18rem;"><h5 class="card-title">Lugar</h5><h6 class="card-subtitle mb-2 text-muted">'+input+'</h6><h6 class="card-subtitle mb-2 text-muted">'+input2+'</h6><a href="#" class="cardLugar">Lo veo</a><a href="#" class="cancelarVoto">No lo veo</a><h3>Votos:<span>0</span></h3><button class="eliminar">Eliminar</button></div>'
@@ -103,10 +103,10 @@ function iniciarAplicacion(usuario){
       }
 });
 
-  //sumar votos en card
+  //sumar votos en card y solo poder votar a uno
   $(document).on('click',"a.cardLugar",function(event){
     if($(event.currentTarget).hasClass('clicked')) {
-            alert('ya has votado una vez');
+            alert('ya has votado una vez en esta propuesta');
 
       return;
 
@@ -116,14 +116,20 @@ function iniciarAplicacion(usuario){
                   //console.log(span)
       var id=$(event.currentTarget).parent().data('id');
   //peticion ajax sumar voto
-  $.ajax({ url:'http://192.168.100.50:1337/fecha/sumar/'+ id,
+  $.ajax({ url:'http://192.168.100.62:1337/fecha/sumar/'+ id,
            type:'PUT',
            data:{creador:USUARIO_ID,
                 usuario:USUARIO_ID,
            },
         }).done(function(datos){
-              console.log(datos)
-        });
+                    console.log(datos)
+        }).fail(function(error){
+            if(error.responseText === "Ya has votado antes, vaya pícaro."){
+                alert('ya has votado una vez en esta propuesta');
+                    console.log(error)
+          }
+
+        })
 
       var votosActuales=parseInt(span.text());
       var nuevosVotos=votosActuales + 1;
@@ -142,7 +148,7 @@ function iniciarAplicacion(usuario){
               var id=$(event.currentTarget).parent().data('id');
               var span=$(event.currentTarget).next("h3").children("span");
         //peticion ajax restar voto
-          $.ajax({ url:'http://192.168.100.50:1337/fecha/restar/'+ id,
+          $.ajax({ url:'http://192.168.100.62:1337/fecha/restar/'+ id,
                   type:'PUT',
                   data:{
                         usuario:USUARIO_ID,
@@ -161,7 +167,7 @@ function iniciarAplicacion(usuario){
 
   });
 //pintando los datos en nuestro html
-  var url="http://192.168.100.50:1337/fechas"
+  var url="http://192.168.100.62:1337/fechas"
 
     $.get(url,function(respuesta){
             //console.log(respuesta);
@@ -182,7 +188,7 @@ function iniciarAplicacion(usuario){
       var id=$(event.currentTarget).parent().data('id');
     var divEntero=$(event.currentTarget).parent();
               //console.log(divEntero)
-          $.ajax({url:'http://192.168.100.50:1337/fecha/'+ id,
+          $.ajax({url:'http://192.168.100.62:1337/fecha/'+ id,
                    type:'DELETE',
                    data:{creador:USUARIO_ID,
                          usuario:USUARIO_ID,},
